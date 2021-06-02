@@ -1,4 +1,5 @@
 package com.example.IncidentSystem.Models;
+import java.io.Serializable;
 import java.sql.Blob;
 
 import javax.persistence.Column;
@@ -12,8 +13,7 @@ import javax.persistence.Id;
 
 @Entity
 @Table(name = "incident_attachments")
-public class IncidentAttachments 
-{
+public class IncidentAttachments implements Serializable{
 	@Id
 	private long id;
 
