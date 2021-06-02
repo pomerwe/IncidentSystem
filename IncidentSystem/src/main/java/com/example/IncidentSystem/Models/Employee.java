@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@Table(name = "Employee")
+@Table(name = "employee")
 public class Employee {
 
 	@Id
@@ -20,15 +20,15 @@ public class Employee {
 	@Column
 	private String name;
 	
-	@ManyToOne(fetch = FetchType.EAGER,  cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "team_id")
 	private Team team;
 	
-	@ManyToOne(fetch = FetchType.EAGER,  cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "system_role_id")
 	private SystemRole system_role;
 	
-	@ManyToOne(fetch = FetchType.EAGER,  cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "team_id")
 	private BusinessRole business_role;
 }
