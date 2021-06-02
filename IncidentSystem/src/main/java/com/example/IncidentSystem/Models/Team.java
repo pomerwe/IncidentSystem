@@ -1,5 +1,6 @@
 package com.example.IncidentSystem.Models;
 
+import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 @Table(name = "team")
-public class Team {
+public class Team implements Serializable {
 
 	@Id
 	@Column

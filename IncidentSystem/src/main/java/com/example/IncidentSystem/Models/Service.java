@@ -1,5 +1,6 @@
 package com.example.IncidentSystem.Models;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -19,7 +20,7 @@ import com.example.IncidentSystem.Models.Enums.Priority;
 
 @Entity
 @Table(name = "service")
-public class Service {
+public class Service implements Serializable {
 	
 	@Id
 	@Column

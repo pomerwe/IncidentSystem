@@ -7,10 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "business_role")
-public class BusinessRole {
+public class BusinessRole implements Serializable {
 	
 	@Id
 	@Column

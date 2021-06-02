@@ -8,10 +8,11 @@ import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "employee")
-public class Employee{
+public class Employee implements Serializable {
 
 	@Id
 	@Column

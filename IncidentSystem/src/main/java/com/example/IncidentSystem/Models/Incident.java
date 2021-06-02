@@ -1,11 +1,12 @@
 package com.example.IncidentSystem.Models;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "incident")
-public class Incident {
+public class Incident implements Serializable {
 
     @Id
     @Column
