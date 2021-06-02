@@ -27,6 +27,5 @@ public class Team implements Serializable {
 	private Set<Service> services;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
-	@JsonIgnore
 	private Set<Employee> employees;
 }
