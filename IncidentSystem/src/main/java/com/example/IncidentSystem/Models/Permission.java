@@ -9,19 +9,16 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "business_role")
-public class BusinessRole {
-	
+@Table(name = "permission")
+public class Permission {
+
 	@Id
 	@Column
 	private int id;
 
 	@Column
-	private String name;
-
-	@Column
-	private String description;
+	private String tag;
 	
-	@ManyToMany(mappedBy = "approver_roles")
-	private Set<Service> services;
+	@ManyToMany(mappedBy = "permissions")
+	private Set<SystemRole> system_roles;
 }

@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @Table(name = "employee")
-public class Employee {
+public class Employee{
 
 	@Id
 	@Column
