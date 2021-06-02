@@ -1,7 +1,5 @@
 package com.example.IncidentSystem.Models;
 
-import org.apache.catalina.Service;
-
 import javax.persistence.*;
 import java.util.Date;
 
