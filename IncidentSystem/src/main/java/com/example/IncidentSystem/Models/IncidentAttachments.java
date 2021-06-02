@@ -8,10 +8,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Id;
 
 @Entity
 @Table(name = "incident_attachments")
-public class IncidentAttachments {
+public class IncidentAttachments 
+{
+	@Id
+	private long id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "incident_id")

@@ -33,7 +33,7 @@ public class Employee implements Serializable {
 	private SystemRole system_role;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "team_id")
+	@JoinColumn(name = "business_role_id")
 	private BusinessRole business_role;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "request_employee")
