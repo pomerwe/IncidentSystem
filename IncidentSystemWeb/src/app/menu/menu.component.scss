@@ -1,0 +1,34 @@
+.menu{
+    margin-top: 60px;
+    margin-right: 0px;
+    position:absolute;
+    top:0;
+    left: 0;
+    width:200px;
+    background-color: #1976d2;
+    color: white;
+    animation: menuIn 0.1s;
+    transition: width 0.1s;
+    
+    .menuItem{
+        display: block;
+        padding:15px;
+    }
+    .menuItem:hover{
+        background-color: rgba(149, 190, 255, 0.534);
+        cursor: pointer;
+    }
+}
+
+.menuOut{
+    width: 0px;
+}
+
+@keyframes menuIn{
+    from{
+        width: 0px;
+    }
+    to{
+        width: 200px;
+    }
+}
