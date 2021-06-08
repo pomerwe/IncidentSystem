@@ -25,6 +25,7 @@
         .header-div{
             text-align: right;
             padding:25px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.233);
             
             .title{
                 float: left;
@@ -42,6 +43,7 @@
         }
 
         .overlay-panel-content{
+            text-align: left !important;
             padding:15px;
             position:relative;
             display:block;

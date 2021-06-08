@@ -42,18 +42,39 @@
 
 <app-overlay-panel *ngIf="isAdding" title = "Abrir Incidente" (close) = "closeIncidentAddPanel()">
 
-  <div>
+  <div class="incident-add-panel">
     <form class="example-form">
-      <mat-form-field class="example-full-width" style="display:block;">
-        <mat-label>Favorite food</mat-label>
-        <input matInput placeholder="Ex. Pizza" value="Sushi">
+      <span>Times</span>
+      <mat-form-field appearance="fill" class = "form-item">
+        <mat-select [(value)]="selectedTeam">
+          <mat-option *ngFor="let team of teamList" [value]="team">
+            {{team.name}}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
-    
-      <mat-form-field class="example-full-width" style="display:block;">
-        <mat-label>Leave a comment</mat-label>
-        <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
+      <span *ngIf="selectedTeam != undefined">Serviço</span>
+      <mat-form-field appearance="fill" class = "form-item" *ngIf="selectedTeam != undefined">
+        <mat-select [(value)]="selectedService">
+          <mat-option *ngFor="let service of selectedTeam.services" [value]="service">
+            {{service.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field *ngIf="selectedService != undefined" class="example-full-width form-item form-item-textarea">
+        <mat-label>Descrição</mat-label>
+        <textarea matInput [(ngModel)] = "incidentDescription" placeholder="Descreva aqui os detalhes do incidente..." name="desc">
+        </textarea>
       </mat-form-field>
     </form>
+    <div *ngIf="selectedService != undefined" class="file-upload-div">
+      <span>Anexar arquivos</span><br>
+      <input class="ng-hide" (change)="handleFileInput($event)" id="input-file-id" multiple type="file" name="attachments" />
+    </div>
+    <div class="send-button-div">
+      <button mat-stroked-button (click) = "sendIncident()" [disabled]="!canSendIncident()">
+        Enviar
+      </button>
+    </div>
   </div>
 </app-overlay-panel>
 

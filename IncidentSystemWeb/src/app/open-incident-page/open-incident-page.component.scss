@@ -24,3 +24,21 @@ div{
         cursor: pointer;
     }
 }
+
+.incident-add-panel{
+    text-align: left;
+
+    .form-item{
+        display:block;
+    }
+    .file-upload-div{
+        display:block;
+        text-align: left;
+        padding: 0px;
+    }
+    .send-button-div{
+        display:block;
+        text-align: right;
+        padding: 0px;
+    }
+}
