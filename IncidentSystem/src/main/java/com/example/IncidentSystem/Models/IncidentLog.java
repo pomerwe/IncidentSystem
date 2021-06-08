@@ -2,6 +2,7 @@ package com.example.IncidentSystem.Models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -13,7 +14,7 @@ public class IncidentLog implements Serializable {
     private long id;
 
     @Column
-    private Date log_date;
+    private LocalDateTime log_date;
     
     @Column
     private int request_employee_id;

@@ -1,7 +1,12 @@
 package com.example.IncidentSystem.Models;
 
 import javax.persistence.*;
+
+import com.example.IncidentSystem.Models.Enums.IncidentStatus;
+
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,19 +31,20 @@ public class Incident implements Serializable {
     private Service service;
 
     @Column
-    private String status;
+	@Enumerated(EnumType.STRING)
+    private IncidentStatus status;
 
     @Column
-    private Date create_date;
+    private LocalDateTime create_date;
 
     @Column
-    private Date finish_date;
+    private LocalDateTime finish_date;
 
     @Column
     private String description;
 
     @Column
-    private String approved;
+    private boolean approved;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "approve_employee_id")

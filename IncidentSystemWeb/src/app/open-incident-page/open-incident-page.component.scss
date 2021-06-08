@@ -1,0 +1,26 @@
+div{
+    text-align: center;
+    padding:20px;
+}
+
+.cdk-mouse-focused.cdk-mouse-focused{
+    border:none !important;
+    outline:none;
+}
+
+.action-button{
+    border:none;
+    outline: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.incidentActions{
+    text-align: right;
+    .add-button{
+        font-size: 35px !important;
+        vertical-align: middle;
+        display: inline-block;
+        cursor: pointer;
+    }
+}

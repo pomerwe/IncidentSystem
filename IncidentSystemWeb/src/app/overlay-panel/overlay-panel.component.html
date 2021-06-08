@@ -1,0 +1,15 @@
+<div class="screen-overlay"> 
+    <div class="screen-overlay-panel">
+        <div class="header-div">
+            <div class = "title">
+                {{title}}
+            </div>
+            <span class="material-icons close-button" (click)="closePanel()">
+                close
+            </span>
+        </div>
+        <div class="overlay-panel-content">
+            <ng-content></ng-content>
+        </div>
+    </div> 
+ </div>

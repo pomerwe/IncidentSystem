@@ -1,10 +1,11 @@
 .menu{
-    margin-top: 60px;
     margin-right: 0px;
     position:absolute;
     top:0;
     left: 0;
     width:200px;
+    height: 100%;
+    padding-top: 60px;
     background-color: #1976d2;
     color: white;
     animation: menuIn 0.1s;
@@ -13,6 +14,7 @@
     .menuItem{
         display: block;
         padding:15px;
+        color: white;
     }
     .menuItem:hover{
         background-color: rgba(149, 190, 255, 0.534);

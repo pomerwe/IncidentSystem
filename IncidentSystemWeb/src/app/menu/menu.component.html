@@ -1,4 +1,4 @@
 <div class="menu" id="menuElementBody" #menuElement>
-    <a class="menuItem" *ngFor = "let x of [1,2,3]">{{x}}</a>
+    <a class="menuItem" [href]="menu.path" *ngFor = "let menu of menuItens">{{menu.label}}</a>
 </div>
 
