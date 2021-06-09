@@ -1,6 +1,7 @@
 import { IncidentInsertDTO } from "src/app/dto/IncidentInsertDTO";
 import { Employee } from "src/models/Employee";
 import { IncidentStatus } from "src/models/enum/IncidentStatus";
+import { Priority } from "src/models/enum/Priority";
 import { Incident } from "src/models/Incident";
 import { Team } from "src/models/Team";
 
@@ -41,13 +42,15 @@ export class MockService{
       attachments: [],
       approved: true,
       status: IncidentStatus.Opened,
-      create_date: new Date(),
+      create_date: new Date('2021-06-08 02:31'),
       description: "Incident 1",
       finish_date: null,
       service: {
         id:1,
         description:"Serviço do incident 1",
-        name:"Coleta de mock"
+        name:"Coleta de mock",
+        priority: Priority.CRITICAL,
+        serviceLevelAgreement: 1440
       },
       request_employee: this.getEmployeeMock(),
       resolve_employee: this.getEmployeeMock(),
@@ -66,7 +69,7 @@ export class MockService{
       finish_date: null,
       service: incident.service,
       request_employee: incident.request_employee,
-      resolve_employee: this.getEmployeeMock(),
+      resolve_employee: null,
     };
   }
 
@@ -79,16 +82,22 @@ export class MockService{
         id:1,
         name:"Troca de pc",
         description: "Troca de pc para trabalho, em caso de má performance.",
+        priority: Priority.MEDIUM,
+        serviceLevelAgreement: 3600
       },
       {
         id:2,
         name:"Manutenção de periféricos",
         description: "Limpeza de periféricos utilizados.",
+        priority: Priority.LOW,
+        serviceLevelAgreement: 7200
       },
       {
         id:3,
         name:"Desbloqueio de acesso",
         description: "Desbloquear acesso ao usuário administrador.",
+        priority: Priority.HIGH,
+        serviceLevelAgreement: 120
       }]
     };
   }

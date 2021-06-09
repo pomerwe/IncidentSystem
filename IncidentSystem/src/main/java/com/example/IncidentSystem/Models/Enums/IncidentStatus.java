@@ -4,5 +4,6 @@ public enum IncidentStatus {
 	Opened,
 	In_Progress,
 	Canceled,
-	Rejected
+	Rejected,
+	Finished
 }

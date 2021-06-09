@@ -11,6 +11,11 @@ import { Team } from 'src/models/Team';
 import { MockService } from 'src/services/MockService';
 import { DialogComponent, DialogData } from '../dialog/dialog.component';
 import { IncidentInsertDTO } from '../dto/IncidentInsertDTO';
+import * as _ from 'underscore';
+
+import Holidays from "date-holidays"
+const holidayService = new Holidays("BR")
+
 @Component({
   selector: 'app-open-incident-page',
   templateUrl: './open-incident-page.component.html',
@@ -20,6 +25,9 @@ import { IncidentInsertDTO } from '../dto/IncidentInsertDTO';
   ]
 })
 export class OpenIncidentPageComponent implements OnInit {
+
+  currentUser:Employee;
+
   mockService:MockService;
   currentTab:number = 1;
 
@@ -48,6 +56,25 @@ export class OpenIncidentPageComponent implements OnInit {
   constructor(mockService:MockService, public dialog: MatDialog) 
   { 
     this.mockService = mockService;
+    this.currentUser = {
+      id:1,
+        name:"Estevão",
+        attributed_incidents: [],
+        business_role: {
+          id:1,
+          description:"Coordena os times de ti",
+          name:"Gerente de Ti",
+          services: []
+        },
+        requests:[],
+        system_role:{
+          id:1,
+          description:"administrador",
+          name:"ADMIN",
+          permissions:[]
+        },
+        team: this.mockService.getTeamMock()
+    };
 
     this.teamList = [
       this.mockService.getTeamMock(),
@@ -72,13 +99,13 @@ export class OpenIncidentPageComponent implements OnInit {
 
   unselectAllTabs()
   {
-    let myIncidentsTab = document.getElementById("myIncidentsTab") as HTMLElement;
-    let openedIncidentsTab = document.getElementById("openedIncidentsTab") as HTMLElement;
-    let myOpenedIncidentsTab = document.getElementById("myOpenedIncidentsTab") as HTMLElement;
-
-    myIncidentsTab.classList.remove("selected");
-    openedIncidentsTab.classList.remove("selected");
-    myOpenedIncidentsTab.classList.remove("selected");
+    var tabs = document.getElementsByClassName("tab");
+    
+    for(let i =0; i < tabs.length; i++)
+    {
+      let tab = tabs[i] as HTMLElement;
+      tab.classList.remove("selected");
+    }
   }
 
   selectTab(tab:any)
@@ -139,7 +166,7 @@ export class OpenIncidentPageComponent implements OnInit {
       service: this.selectedService as Service,
       description: this.incidentDescription,
       attachments: this.incidentAttachments,
-      request_employee: employeeMock
+      request_employee: this.currentUser
     }
     this.incidentList.push(this.mockService.createIncidentMock(this.getNextId(), newIncident));
     this.closeIncidentAddPanel();
@@ -184,8 +211,100 @@ export class OpenIncidentPageComponent implements OnInit {
     return new DialogData("Cancelar Incidente", "Deseja realmente cancelar o incidente?");
   }
 
+  getAssignDialog():DialogData
+  {
+    return new DialogData("Atribuir incidente", "Atribuir o incidente para mim?");
+  }
+
+  getResolveDialog():DialogData
+  {
+    return new DialogData("Resolver Incidente", "Deseja finalizar o incidente?");
+  }
+
   limitCharacters(string:string)
   {
-    return string.substring(0, 23)+ "...";
+    let len = string.length
+    return string.substring(0, 23)+ (len > 23 ? "..." : "");
+  }
+
+  assignRequest(incident:Incident)
+  {
+      const dialogRef = this.dialog.open(DialogComponent, {
+      width: '250px',
+      data: this.getAssignDialog()
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if(response)
+      {
+        incident.resolve_employee = this.currentUser;
+        incident.status = IncidentStatus.In_Progress;
+      }
+    });
+  }
+
+  getAssignedIncidents()
+  {
+    return _.where(this.incidentList, {resolve_employee: this.currentUser, status: IncidentStatus.In_Progress});
+  }
+
+  getMyOpenedIncidents()
+  {
+    return _.where(this.incidentList, {request_employee: this.currentUser});
+  }
+
+  getOpenedIncidents()
+  {
+    return _.where(this.incidentList, {status: IncidentStatus.Opened});
+  }
+
+  getIncidentLog()
+  {
+    return _.where(this.incidentList, {status: IncidentStatus.Finished || IncidentStatus.Rejected});
+  }
+
+  resolveRequest(incident:Incident)
+  {
+      const dialogRef = this.dialog.open(DialogComponent, {
+      width: '250px',
+      data: this.getResolveDialog()
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if(response)
+      {
+        incident.status = IncidentStatus.Finished;
+        incident.finish_date = new Date();
+      }
+    });
+  }
+
+  isSlaDeadlinePassed(incident:Incident)
+  {
+    let incidentService = incident.service;
+    let create_date = new Date(incident.create_date);
+    let slaDeadLine = new Date(create_date.getTime() + (incidentService.serviceLevelAgreement * 60 * 1000));
+    let now = new Date();
+
+    return now.getTime() > slaDeadLine.getTime();
+  }
+
+  wasSlaDeadlinePassed(incident:Incident)
+  {
+    let incidentService = incident.service;
+    let create_date = new Date(incident.create_date);
+    let slaDeadLine = new Date(create_date.getTime() + (incidentService.serviceLevelAgreement * 60 * 1000));
+
+    return (incident.finish_date as Date).getTime() > slaDeadLine.getTime();
+  }
+
+  isIncidentFinished(incident:Incident)
+  {
+    return incident.status == IncidentStatus.Finished;
+  }
+
+  isIncidentEditable(incident:Incident)
+  {
+    return incident.status == IncidentStatus.Opened;
   }
 }

@@ -2,8 +2,9 @@
   <span class="tab selected" (click)="selectTab($event); currentTab = 1;" id="myIncidentsTab">Incidentes Atribuidos</span>
   <span class="tab" (click)="selectTab($event); currentTab = 2;" id="openedIncidentsTab">Incidentes em Aberto</span>
   <span class="tab" (click)="selectTab($event); currentTab = 3;" id="myOpenedIncidentsTab">Meus Incidentes</span>
+  <span class="tab" (click)="selectTab($event); currentTab = 4;" id="incidentLog">Histórico de Incidentes</span>
 </div>
-<div id="myIncidents" *ngIf = "currentTab == 1">
+<div id="myOpenedIncidentsTab" *ngIf = "currentTab == 3">
   <div class="incidentActions">
     <span class="material-icons add-button" (click) = "openIncidentAddPanel()">
       add_box
@@ -20,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor = "let incident of incidentList">
+        <tr *ngFor = "let incident of getMyOpenedIncidents()">
           <th scope="row">{{incident.id}}</th>
           <td>
               {{incident.service.name}}
@@ -39,7 +40,7 @@
             </button>
             <mat-menu xPosition="after" yPosition = "below" overlapTrigger="false" #menu="matMenu">
               <button mat-menu-item (click) = "openIncidentDetailPanel(incident)">Detalhes</button>
-              <button mat-menu-item (click) = "cancelIncident(incident)">Cancelar</button>
+              <button mat-menu-item [disabled] = "!isIncidentEditable(incident)"  (click) = "cancelIncident(incident)">Cancelar</button>
             </mat-menu>
           </td>
         </tr>
@@ -74,7 +75,7 @@
       </form>
       <div *ngIf="selectedService != undefined" class="file-upload-div">
         <span hidden>Anexar arquivos</span><br>
-        <input hidden class="ng-hide" [files]="test" (change)="handleFileInput($event)" id="input-file-id" multiple type="file" name="attachments" />
+        <input hidden class="ng-hide" (change)="handleFileInput($event)" id="input-file-id" multiple type="file" name="attachments" />
       </div>
       <div class="send-button-div">
         <button mat-stroked-button (click) = "sendIncident()" [disabled]="!canSendIncident()">
@@ -86,12 +87,14 @@
   
   <app-overlay-panel *ngIf="isDetailOpened" title = "Detalhes Incidente" (close) = "cancelEdit()">
     <div class="incident-detail-panel">
-      <p>Incidente - {{selectedIncident?.id}}</p>
-      <p>Serviço - {{selectedIncident?.service?.name}}</p>
-      <p>Status - {{selectedIncident?.status}}</p>
+      <p>Incidente - {{selectedIncident.id}}</p>
+      <p>Serviço - {{selectedIncident.service.name}}</p>
+      <p>Status - {{selectedIncident.status}}</p>
+      <p *ngIf = "selectedIncident.resolve_employee != null">Solucionador - {{selectedIncident.resolve_employee?.name}}</p>
+      <p *ngIf = "selectedIncident.finish_date != null" >Data Finalizado - {{selectedIncident.finish_date | date:'dd/MM/yyyy HH:mm'}}</p>
       <mat-form-field class="example-full-width form-item form-item-textarea">
         <mat-label>Descrição</mat-label>
-        <textarea matInput [(ngModel)] = "selectedIncident.description" placeholder="Descreva aqui os detalhes do incidente..." name="descEdit">
+        <textarea matInput  [disabled] ="isIncidentFinished(selectedIncident)"  [(ngModel)] = "selectedIncident.description" placeholder="Descreva aqui os detalhes do incidente..." name="descEdit">
         </textarea>
       </mat-form-field>
       <div class="send-button-div">
@@ -107,5 +110,169 @@
 </div>
 
 
+<div id="myIncidentsTab" *ngIf = "currentTab == 1">
+  
+  <div class="incidentActions">
+    <span style =" opacity: 0;">
+      add_box
+    </span>
+  </div>
+  <table class="table fixed">
+      <thead>
+        <tr>
+          <th scope="col">Id Incidente</th>
+          <th scope="col">Serviço</th>
+          <th scope="col">Status</th>
+          <th scope="col">Descrição</th>
+          <th scope="col">Solicitante</th>
+          <th scope="col">Prioridade</th>
+          <th scope="col">Data Abertura</th>
+          <th scope="col">Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr [class]="isSlaDeadlinePassed(incident) ? 'slaPassed' : ''" *ngFor = "let incident of getAssignedIncidents()">
+          <th scope="row">{{incident.id}}</th>
+          <td>
+              {{incident.service.name}}
+          </td>
+          <td>
+            {{incident.status}}
+          </td>
+          <td [title]="incident.description">
+            <p>{{limitCharacters(incident.description)}}</p>
+          </td>
+          <td>
+            <p>{{incident.request_employee.name}}</p>
+          </td>
+          <td>
+            <p [class]="'priority ' + incident.service.priority">{{incident.service.priority}}</p>
+          </td>
+          <td>
+            <p>{{incident.create_date | date:'dd/MM/yyyy HH:mm'}}</p>
+          </td>
+          <td>
+            <button [matMenuTriggerFor]="menu" class="action-button">
+                <span class="material-icons action-button">
+                  keyboard_arrow_down
+              </span>
+            </button>
+            <mat-menu xPosition="after" yPosition = "below" overlapTrigger="false" #menu="matMenu">
+              <button mat-menu-item (click) = "resolveRequest(incident)">Resolver</button>
+            </mat-menu>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+<div id="myOpenedIncidentsTab" *ngIf = "currentTab == 2">
+  
+  <div class="incidentActions">
+    <span style =" opacity: 0;">
+      add_box
+    </span>
+  </div>
+  <table class="table fixed">
+      <thead>
+        <tr>
+          <th scope="col">Id Incidente</th>
+          <th scope="col">Serviço</th>
+          <th scope="col">Status</th>
+          <th scope="col">Descrição</th>
+          <th scope="col">Solicitante</th>
+          <th scope="col">Prioridade</th>
+          <th scope="col">Data Abertura</th>
+          <th scope="col">Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr [class]="isSlaDeadlinePassed(incident) ? 'slaPassed' : ''" *ngFor = "let incident of getOpenedIncidents()">
+          <th scope="row">{{incident.id}}</th>
+          <td>
+              {{incident.service.name}}
+          </td>
+          <td>
+            {{incident.status}}
+          </td>
+          <td [title]="incident.description">
+            <p>{{limitCharacters(incident.description)}}</p>
+          </td>
+          <td>
+            <p>{{incident.request_employee.name}}</p>
+          </td>
+          <td>
+            <p [class]="'priority ' + incident.service.priority">{{incident.service.priority}}</p>
+          </td>
+          <td>
+            <p>{{incident.create_date | date:'dd/MM/yyyy HH:mm'}}</p>
+          </td>
+          <td>
+            <button [matMenuTriggerFor]="menu" class="action-button">
+                <span class="material-icons action-button">
+                  keyboard_arrow_down
+              </span>
+            </button>
+            <mat-menu xPosition="after" yPosition = "below" overlapTrigger="false" #menu="matMenu">
+              <button mat-menu-item (click) = "assignRequest(incident)">Atribuir a Mim</button>
+            </mat-menu>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+<div id="incidentLog" *ngIf = "currentTab == 4">
+  
+  <div class="incidentActions">
+    <span style =" opacity: 0;">
+      add_box
+    </span>
+  </div>
+  <table class="table fixed">
+      <thead>
+        <tr>
+          <th scope="col">Id Incidente</th>
+          <th scope="col">Serviço</th>
+          <th scope="col">Status</th>
+          <th scope="col">Descrição</th>
+          <th scope="col">Solicitante</th>
+          <th scope="col">Solucionador</th>
+          <th scope="col">Prioridade</th>
+          <th scope="col">Data Abertura</th>
+          <th scope="col">Data Finalizado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor = "let incident of getIncidentLog()">
+          <th scope="row">{{incident.id}}</th>
+          <td>
+              {{incident.service.name}}
+          </td>
+          <td>
+            {{incident.status}}
+          </td>
+          <td [title]="incident.description">
+            <p>{{limitCharacters(incident.description)}}</p>
+          </td>
+          <td>
+            <p>{{incident.request_employee.name}}</p>
+          </td>
+          <td>
+            <p>{{incident.resolve_employee?.name}}</p>
+          </td>
+          <td>
+            <p [class]="'priority ' + incident.service.priority">{{incident.service.priority}}</p>
+          </td>
+          <td>
+            <p>{{incident.create_date | date:'dd/MM/yyyy HH:mm'}}</p>
+          </td>
+          <td [class]="wasSlaDeadlinePassed(incident) ? 'troubledFinish' : 'cleanFinish'">
+            <p>{{incident.finish_date | date:'dd/MM/yyyy HH:mm'}}</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
  
 

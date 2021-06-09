@@ -41,7 +41,6 @@ table.fixed td { overflow: hidden; }
         cursor: pointer;
     }
     .selected{
-        font-weight: bold;
         color:white;
         background-color: rgb(25, 118, 210);
     }
@@ -76,4 +75,36 @@ table.fixed td { overflow: hidden; }
         text-align: right;
         padding: 0px;
     }
+}
+
+.Critica{
+    background-color: violet;
+    color: white;
+}
+
+.Alta{
+    background-color: red;
+    color: white;
+}
+
+.Média{
+    background-color: Yellow;
+    color: black;
+}
+
+.Baixa{
+    background-color: green;
+    color: white;
+}
+
+.slaPassed{
+    background-color: rgba(255, 0, 0, 0.397);
+}
+
+.troubledFinish{
+    color:Red;
+}
+
+.cleanFinish{
+    color:green;
 }
