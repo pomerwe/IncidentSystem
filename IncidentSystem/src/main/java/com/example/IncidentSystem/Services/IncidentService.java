@@ -2,6 +2,9 @@ package com.example.IncidentSystem.Services;
 
 import com.example.IncidentSystem.Models.Incident;
 import com.example.IncidentSystem.Models.Service;
+import com.example.IncidentSystem.Repository.ServiceRepository;
+
+import java.util.List;
 
 public class IncidentService {
 
@@ -11,10 +14,10 @@ public class IncidentService {
 	// IncidentLogRepository
 	
 	
-	/*public void openIncident(){
+	public void openIncident(){
 		Incident newIncident = new Incident();
 		
-		Service selectedService = ServiceRepository.getById(dto.Service.id);
+		Service selectedService = ServiceRepository.findFirstById(dto.Service.id);
 				
 		boolean needApproval = selectedService.needApproval();
 	
@@ -28,8 +31,7 @@ public class IncidentService {
 	public void escalateIncident(EscalateIncidentDTO){
 		idIncident 
 		employeeId
-		
-		eoidujasdj
+
 	}
 	
 	public void finishIncident() {
@@ -48,5 +50,5 @@ public class IncidentService {
 	public Incident GetIncident(long incidentId)
 	{
 		
-	}*/
+	}
 }
