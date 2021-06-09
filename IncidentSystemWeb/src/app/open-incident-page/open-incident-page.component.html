@@ -1,82 +1,111 @@
-<div class="incidentActions">
-  <span class="material-icons add-button" (click) = "openIncidentAddPanel()">
-    add_box
-  </span>
+<div class="div-title">
+  <span class="tab selected" (click)="selectTab($event); currentTab = 1;" id="myIncidentsTab">Incidentes Atribuidos</span>
+  <span class="tab" (click)="selectTab($event); currentTab = 2;" id="openedIncidentsTab">Incidentes em Aberto</span>
+  <span class="tab" (click)="selectTab($event); currentTab = 3;" id="myOpenedIncidentsTab">Meus Incidentes</span>
 </div>
-<table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Id Incidente</th>
-        <th scope="col">Serviço</th>
-        <th scope="col">Status</th>
-        <th scope="col">Descrição</th>
-        <th scope="col">Ação</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor = "let incident of incidentList">
-        <th scope="row">{{incident.id}}</th>
-        <td>
-            {{incident.service.name}}
-        </td>
-        <td>
-          {{incidentStatusEnumMapper.getEnumAsString(incident.status)}}
-        </td>
-        <td>
-          {{incident.description}}
-        </td>
-        <td>
-          <button [matMenuTriggerFor]="menu" class="action-button">
-              <span class="material-icons action-button">
-                keyboard_arrow_down
-            </span>
-          </button>
-          <mat-menu xPosition="after" yPosition = "below" overlapTrigger="false" #menu="matMenu">
-            <button mat-menu-item>Detalhes</button>
-            <button mat-menu-item>Cancelar</button>
-          </mat-menu>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-<app-overlay-panel *ngIf="isAdding" title = "Abrir Incidente" (close) = "closeIncidentAddPanel()">
-
-  <div class="incident-add-panel">
-    <form class="example-form">
-      <span>Times</span>
-      <mat-form-field appearance="fill" class = "form-item">
-        <mat-select [(value)]="selectedTeam">
-          <mat-option *ngFor="let team of teamList" [value]="team">
-            {{team.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <span *ngIf="selectedTeam != undefined">Serviço</span>
-      <mat-form-field appearance="fill" class = "form-item" *ngIf="selectedTeam != undefined">
-        <mat-select [(value)]="selectedService">
-          <mat-option *ngFor="let service of selectedTeam.services" [value]="service">
-            {{service.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field *ngIf="selectedService != undefined" class="example-full-width form-item form-item-textarea">
+<div id="myIncidents" *ngIf = "currentTab == 1">
+  <div class="incidentActions">
+    <span class="material-icons add-button" (click) = "openIncidentAddPanel()">
+      add_box
+    </span>
+  </div>
+  <table class="table fixed">
+      <thead>
+        <tr>
+          <th scope="col">Id Incidente</th>
+          <th scope="col">Serviço</th>
+          <th scope="col">Status</th>
+          <th scope="col">Descrição</th>
+          <th scope="col">Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor = "let incident of incidentList">
+          <th scope="row">{{incident.id}}</th>
+          <td>
+              {{incident.service.name}}
+          </td>
+          <td>
+            {{incident.status}}
+          </td>
+          <td [title]="incident.description">
+            <p>{{limitCharacters(incident.description)}}</p>
+          </td>
+          <td>
+            <button [matMenuTriggerFor]="menu" class="action-button">
+                <span class="material-icons action-button">
+                  keyboard_arrow_down
+              </span>
+            </button>
+            <mat-menu xPosition="after" yPosition = "below" overlapTrigger="false" #menu="matMenu">
+              <button mat-menu-item (click) = "openIncidentDetailPanel(incident)">Detalhes</button>
+              <button mat-menu-item (click) = "cancelIncident(incident)">Cancelar</button>
+            </mat-menu>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+  <app-overlay-panel *ngIf="isAdding" title = "Abrir Incidente" (close) = "closeIncidentAddPanel()">
+  
+    <div class="incident-add-panel">
+      <form class="example-form">
+        <span>Times</span>
+        <mat-form-field appearance="fill" class = "form-item">
+          <mat-select [(value)]="selectedTeam">
+            <mat-option *ngFor="let team of teamList" [value]="team">
+              {{team.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <span *ngIf="selectedTeam != undefined">Serviço</span>
+        <mat-form-field appearance="fill" class = "form-item" *ngIf="selectedTeam != undefined">
+          <mat-select [(value)]="selectedService">
+            <mat-option *ngFor="let service of selectedTeam.services" [value]="service">
+              {{service.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="selectedService != undefined" class="example-full-width form-item form-item-textarea">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput [(ngModel)] = "incidentDescription" placeholder="Descreva aqui os detalhes do incidente..." name="desc">
+          </textarea>
+        </mat-form-field>
+      </form>
+      <div *ngIf="selectedService != undefined" class="file-upload-div">
+        <span hidden>Anexar arquivos</span><br>
+        <input hidden class="ng-hide" [files]="test" (change)="handleFileInput($event)" id="input-file-id" multiple type="file" name="attachments" />
+      </div>
+      <div class="send-button-div">
+        <button mat-stroked-button (click) = "sendIncident()" [disabled]="!canSendIncident()">
+          Enviar
+        </button>
+      </div>
+    </div>
+  </app-overlay-panel>
+  
+  <app-overlay-panel *ngIf="isDetailOpened" title = "Detalhes Incidente" (close) = "cancelEdit()">
+    <div class="incident-detail-panel">
+      <p>Incidente - {{selectedIncident?.id}}</p>
+      <p>Serviço - {{selectedIncident?.service?.name}}</p>
+      <p>Status - {{selectedIncident?.status}}</p>
+      <mat-form-field class="example-full-width form-item form-item-textarea">
         <mat-label>Descrição</mat-label>
-        <textarea matInput [(ngModel)] = "incidentDescription" placeholder="Descreva aqui os detalhes do incidente..." name="desc">
+        <textarea matInput [(ngModel)] = "selectedIncident.description" placeholder="Descreva aqui os detalhes do incidente..." name="descEdit">
         </textarea>
       </mat-form-field>
-    </form>
-    <div *ngIf="selectedService != undefined" class="file-upload-div">
-      <span>Anexar arquivos</span><br>
-      <input class="ng-hide" (change)="handleFileInput($event)" id="input-file-id" multiple type="file" name="attachments" />
+      <div class="send-button-div">
+        <button mat-button (click) = "cancelEdit()">
+          Cancelar
+        </button>
+        <button mat-stroked-button (click) = "saveEdit()">
+          Salvar
+        </button>
+      </div>
     </div>
-    <div class="send-button-div">
-      <button mat-stroked-button (click) = "sendIncident()" [disabled]="!canSendIncident()">
-        Enviar
-      </button>
-    </div>
-  </div>
-</app-overlay-panel>
+  </app-overlay-panel>
+</div>
+
 
  
 

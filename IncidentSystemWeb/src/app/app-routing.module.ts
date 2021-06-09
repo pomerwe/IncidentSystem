@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { OpenIncidentPageComponent } from './open-incident-page/open-incident-page.component';
 
 const routes: Routes = [{
-  path:"incidents",
+  path:"",
   component: OpenIncidentPageComponent
 }];
 

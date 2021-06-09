@@ -8,6 +8,9 @@ div{
     outline:none;
 }
 
+table.fixed { table-layout:fixed; }
+table.fixed td { overflow: hidden; }
+
 .action-button{
     border:none;
     outline: none;
@@ -25,6 +28,26 @@ div{
     }
 }
 
+
+
+.div-title{
+    float:left;
+    position:absolute;
+
+    .tab{
+        font-size: large;
+        margin-right: 10px;
+        padding:20px;
+        cursor: pointer;
+    }
+    .selected{
+        font-weight: bold;
+        color:white;
+        background-color: rgb(25, 118, 210);
+    }
+    
+}
+
 .incident-add-panel{
     text-align: left;
 
@@ -35,6 +58,18 @@ div{
         display:block;
         text-align: left;
         padding: 0px;
+    }
+    .send-button-div{
+        display:block;
+        text-align: right;
+        padding: 0px;
+    }
+}
+
+.incident-detail-panel{
+    text-align: left;
+    .form-item{
+        display:block;
     }
     .send-button-div{
         display:block;

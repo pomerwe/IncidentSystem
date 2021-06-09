@@ -13,4 +13,5 @@ export interface Incident extends Model{
     approved:boolean;
     attachments:IncidentAttachments[];
     request_employee:Employee;
+    resolve_employee:Employee;
 }
