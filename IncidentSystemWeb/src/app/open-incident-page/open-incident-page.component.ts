@@ -300,11 +300,12 @@ export class OpenIncidentPageComponent implements OnInit {
 
   isIncidentFinished(incident:Incident)
   {
-    return incident.status == IncidentStatus.Finished;
+    return incident.status == "Aberto";
   }
 
   isIncidentEditable(incident:Incident)
   {
+    console.log(incident.status, incident.status == IncidentStatus.Opened)
     return incident.status == IncidentStatus.Opened;
   }
 }

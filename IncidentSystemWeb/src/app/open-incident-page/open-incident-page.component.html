@@ -1,6 +1,6 @@
 <div class="div-title">
-  <span class="tab selected" (click)="selectTab($event); currentTab = 1;" id="myIncidentsTab">Incidentes Atribuidos</span>
-  <span class="tab" (click)="selectTab($event); currentTab = 2;" id="openedIncidentsTab">Incidentes em Aberto</span>
+  <span class="tab selected" (click)="selectTab($event); currentTab = 1;" id="openedIncidentsTab">Incidentes em Aberto</span>
+  <span class="tab" (click)="selectTab($event); currentTab = 2;" id="myIncidentsTab">Incidentes Atribuidos</span>
   <span class="tab" (click)="selectTab($event); currentTab = 3;" id="myOpenedIncidentsTab">Meus Incidentes</span>
   <span class="tab" (click)="selectTab($event); currentTab = 4;" id="incidentLog">Histórico de Incidentes</span>
 </div>
@@ -94,7 +94,7 @@
       <p *ngIf = "selectedIncident.finish_date != null" >Data Finalizado - {{selectedIncident.finish_date | date:'dd/MM/yyyy HH:mm'}}</p>
       <mat-form-field class="example-full-width form-item form-item-textarea">
         <mat-label>Descrição</mat-label>
-        <textarea matInput  [disabled] ="isIncidentFinished(selectedIncident)"  [(ngModel)] = "selectedIncident.description" placeholder="Descreva aqui os detalhes do incidente..." name="descEdit">
+        <textarea matInput  [disabled] ="!isIncidentEditable(selectedIncident)"  [(ngModel)] = "selectedIncident.description" placeholder="Descreva aqui os detalhes do incidente..." name="descEdit">
         </textarea>
       </mat-form-field>
       <div class="send-button-div">
@@ -110,7 +110,7 @@
 </div>
 
 
-<div id="myIncidentsTab" *ngIf = "currentTab == 1">
+<div id="myIncidentsTab" *ngIf = "currentTab == 2">
   
   <div class="incidentActions">
     <span style =" opacity: 0;">
@@ -166,7 +166,7 @@
     </table>
 </div>
 
-<div id="myOpenedIncidentsTab" *ngIf = "currentTab == 2">
+<div id="openedIncidentsTab" *ngIf = "currentTab == 1">
   
   <div class="incidentActions">
     <span style =" opacity: 0;">
