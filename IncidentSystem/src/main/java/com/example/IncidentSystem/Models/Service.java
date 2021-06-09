@@ -51,5 +51,74 @@ public class Service implements Serializable {
 	private Set<BusinessRole> approver_roles;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "service")
-	private Set<Incident> incident; 
+	private Set<Incident> incident;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Priority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Priority priority) {
+		this.priority = priority;
+	}
+
+	public int getServiceLevelAgreement() {
+		return ServiceLevelAgreement;
+	}
+
+	public void setServiceLevelAgreement(int serviceLevelAgreement) {
+		ServiceLevelAgreement = serviceLevelAgreement;
+	}
+
+	public Team getTeam() {
+		return team;
+	}
+
+	public void setTeam(Team team) {
+		this.team = team;
+	}
+
+	public Set<BusinessRole> getApprover_roles() {
+		return approver_roles;
+	}
+
+	public void setApprover_roles(Set<BusinessRole> approver_roles) {
+		this.approver_roles = approver_roles;
+	}
+
+	public Set<Incident> getIncident() {
+		return incident;
+	}
+
+	public void setIncident(Set<Incident> incident) {
+		this.incident = incident;
+	} 
+	
+	public boolean needApproval()
+	{
+		return this.approver_roles.size() > 0;
+	}
 }
