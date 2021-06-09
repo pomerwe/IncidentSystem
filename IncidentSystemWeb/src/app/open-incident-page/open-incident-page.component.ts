@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MenuPositionX, MenuPositionY } from '@angular/material/menu';
 import { EnumMapper } from 'src/classes/EnumUtils';
 import { MaterialSelectItem } from 'src/classes/MaterialSelectItem';
@@ -8,7 +9,13 @@ import { Incident } from 'src/models/Incident';
 import { Service } from 'src/models/Service';
 import { Team } from 'src/models/Team';
 import { MockService } from 'src/services/MockService';
+import { DialogComponent, DialogData } from '../dialog/dialog.component';
 import { IncidentInsertDTO } from '../dto/IncidentInsertDTO';
+import * as _ from 'underscore';
+
+import Holidays from "date-holidays"
+const holidayService = new Holidays("BR")
+
 @Component({
   selector: 'app-open-incident-page',
   templateUrl: './open-incident-page.component.html',
@@ -19,18 +26,24 @@ import { IncidentInsertDTO } from '../dto/IncidentInsertDTO';
 })
 export class OpenIncidentPageComponent implements OnInit {
 
+  currentUser:Employee;
+
   mockService:MockService;
+  currentTab:number = 1;
 
   incidentStatusEnumMapper:any = new EnumMapper(IncidentStatus);
   
   isAdding:boolean = false;
-  isEditing:boolean = false;
+  isDetailOpened:boolean = false;
   incidentAttachments:any;
+
+  test:Blob[] = [] ;
 
   xPosition:MenuPositionX = 'before';
   yPosition:MenuPositionY = 'below';
 
-  selectedIncident:Incident | undefined = undefined;
+  selectedIncident:Incident;
+  originalIncident:Incident | undefined = undefined;
 
   selectedTeam:Team | undefined = undefined;
   selectedService:Service | undefined = undefined;
@@ -40,9 +53,28 @@ export class OpenIncidentPageComponent implements OnInit {
   
   teamList: Team[];
 
-  constructor(mockService:MockService) 
+  constructor(mockService:MockService, public dialog: MatDialog) 
   { 
     this.mockService = mockService;
+    this.currentUser = {
+      id:1,
+        name:"Estevão",
+        attributed_incidents: [],
+        business_role: {
+          id:1,
+          description:"Coordena os times de ti",
+          name:"Gerente de Ti",
+          services: []
+        },
+        requests:[],
+        system_role:{
+          id:1,
+          description:"administrador",
+          name:"ADMIN",
+          permissions:[]
+        },
+        team: this.mockService.getTeamMock()
+    };
 
     this.teamList = [
       this.mockService.getTeamMock(),
@@ -51,33 +83,74 @@ export class OpenIncidentPageComponent implements OnInit {
     ]
 
     this.incidentList = [
-      this.mockService.getIncidentMock(),
-      this.mockService.getIncidentMock(),
-      this.mockService.getIncidentMock()
+      this.mockService.getIncidentMock(1),
+      this.mockService.getIncidentMock(2),
+      this.mockService.getIncidentMock(3)
     ];
+
+    this.selectedIncident = this.incidentList[2];
   }
 
   
   ngOnInit(): void {
+
   }
 
-  toggleEdit()
+
+  unselectAllTabs()
   {
-    this.isEditing = !this.isEditing;
+    var tabs = document.getElementsByClassName("tab");
+    
+    for(let i =0; i < tabs.length; i++)
+    {
+      let tab = tabs[i] as HTMLElement;
+      tab.classList.remove("selected");
+    }
+  }
+
+  selectTab(tab:any)
+  {
+    this.unselectAllTabs();
+    tab.target.classList.add("selected");
+  }
+
+  openIncidentAddPanel()
+  {
+    this.isAdding = true;
   }
 
   closeIncidentAddPanel()
   {
     this.isAdding = false;
     this.selectedTeam = undefined;
-    this.selectedIncident = undefined;
     this.selectedService = undefined;
     this.incidentDescription = "";
   }
 
-  openIncidentAddPanel()
+  openIncidentDetailPanel(incident:Incident)
   {
-    this.isAdding = true;
+    this.isDetailOpened = true;
+    this.selectedIncident = incident;
+    this.originalIncident = {...this.selectedIncident};
+  }
+
+  saveEdit()
+  {
+    this.closeIncidentDetailPanel();
+  }
+
+  cancelEdit()
+  {
+    let original =this.originalIncident as Incident;
+    this.selectedIncident.description = original.description;
+    this.closeIncidentDetailPanel();
+  }
+
+  closeIncidentDetailPanel()
+  {
+    this.isDetailOpened = false;
+    this.selectedIncident = this.mockService.getIncidentMock(1);
+    this.originalIncident = undefined;
   }
 
   canSendIncident():boolean{
@@ -93,13 +166,146 @@ export class OpenIncidentPageComponent implements OnInit {
       service: this.selectedService as Service,
       description: this.incidentDescription,
       attachments: this.incidentAttachments,
-      request_employee: employeeMock
+      request_employee: this.currentUser
     }
-    console.log(newIncident);
+    this.incidentList.push(this.mockService.createIncidentMock(this.getNextId(), newIncident));
+    this.closeIncidentAddPanel();
+  }
+
+  getNextId()
+  {
+    let nextId = 1;
+    
+    this.incidentList.forEach(i =>{
+      if(nextId <= i.id)
+      {
+        nextId = i.id + 1;
+      }
+    }); 
+
+    return nextId;
   }
 
   handleFileInput(event:any)
   {
     this.incidentAttachments = event.target.files;
+  }
+
+  cancelIncident(incident:Incident)
+  {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '250px',
+      data: this.getCancelDialog()
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if(response)
+      {
+        this.incidentList = this.incidentList.remove(incident);
+      }
+    });
+  }
+
+  getCancelDialog():DialogData
+  {
+    return new DialogData("Cancelar Incidente", "Deseja realmente cancelar o incidente?");
+  }
+
+  getAssignDialog():DialogData
+  {
+    return new DialogData("Atribuir incidente", "Atribuir o incidente para mim?");
+  }
+
+  getResolveDialog():DialogData
+  {
+    return new DialogData("Resolver Incidente", "Deseja finalizar o incidente?");
+  }
+
+  limitCharacters(string:string)
+  {
+    let len = string.length
+    return string.substring(0, 23)+ (len > 23 ? "..." : "");
+  }
+
+  assignRequest(incident:Incident)
+  {
+      const dialogRef = this.dialog.open(DialogComponent, {
+      width: '250px',
+      data: this.getAssignDialog()
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if(response)
+      {
+        incident.resolve_employee = this.currentUser;
+        incident.status = IncidentStatus.In_Progress;
+      }
+    });
+  }
+
+  getAssignedIncidents()
+  {
+    return _.where(this.incidentList, {resolve_employee: this.currentUser, status: IncidentStatus.In_Progress});
+  }
+
+  getMyOpenedIncidents()
+  {
+    return _.where(this.incidentList, {request_employee: this.currentUser});
+  }
+
+  getOpenedIncidents()
+  {
+    return _.where(this.incidentList, {status: IncidentStatus.Opened});
+  }
+
+  getIncidentLog()
+  {
+    return _.where(this.incidentList, {status: IncidentStatus.Finished || IncidentStatus.Rejected});
+  }
+
+  resolveRequest(incident:Incident)
+  {
+      const dialogRef = this.dialog.open(DialogComponent, {
+      width: '250px',
+      data: this.getResolveDialog()
+    });
+
+    dialogRef.afterClosed().subscribe(response => {
+      if(response)
+      {
+        incident.status = IncidentStatus.Finished;
+        incident.finish_date = new Date();
+      }
+    });
+  }
+
+  isSlaDeadlinePassed(incident:Incident)
+  {
+    let incidentService = incident.service;
+    let create_date = new Date(incident.create_date);
+    let slaDeadLine = new Date(create_date.getTime() + (incidentService.serviceLevelAgreement * 60 * 1000));
+    let now = new Date();
+
+    return now.getTime() > slaDeadLine.getTime();
+  }
+
+  wasSlaDeadlinePassed(incident:Incident)
+  {
+    let incidentService = incident.service;
+    let create_date = new Date(incident.create_date);
+    let slaDeadLine = new Date(create_date.getTime() + (incidentService.serviceLevelAgreement * 60 * 1000));
+
+    return (incident.finish_date as Date).getTime() > slaDeadLine.getTime();
+  }
+
+  isIncidentFinished(incident:Incident)
+  {
+    return incident.status == "Aberto";
+  }
+
+  isIncidentEditable(incident:Incident)
+  {
+    console.log(incident.status, incident.status == IncidentStatus.Opened)
+    return incident.status == IncidentStatus.Opened;
   }
 }

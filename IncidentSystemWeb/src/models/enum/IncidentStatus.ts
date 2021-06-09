@@ -1,6 +1,7 @@
 export enum IncidentStatus{
-    Opened,
-	In_Progress,
-	Canceled,
-	Rejected
+    Opened = "Aberto",
+	In_Progress = "Em Progresso",
+	Canceled = "Cancelado",
+	Rejected = "Rejeitado",
+	Finished = "Finalizado",
 }
