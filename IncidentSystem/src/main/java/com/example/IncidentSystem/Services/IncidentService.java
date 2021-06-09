@@ -2,23 +2,29 @@ package com.example.IncidentSystem.Services;
 
 import com.example.IncidentSystem.Models.Incident;
 import com.example.IncidentSystem.Models.Service;
+import com.example.IncidentSystem.Repository.IncidentLogRepository;
+import com.example.IncidentSystem.Repository.IncidentRepository;
 import com.example.IncidentSystem.Repository.ServiceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class IncidentService {
 
-	//Repositories necessarios
-	// IncidentRepository
-	// ServiceRepository
-	// IncidentLogRepository
-	
+	@Autowired
+	ServiceRepository serviceRepository;
+
+	@Autowired
+	IncidentRepository incidentRepository;
+
+	@Autowired
+	IncidentLogRepository incidentLogRepository;
 	
 	public void openIncident(){
 		Incident newIncident = new Incident();
 		
-		Service selectedService = ServiceRepository.findFirstById(dto.Service.id);
-				
+		Service selectedService = serviceRepository.findById(dto.Service.id);
+
 		boolean needApproval = selectedService.needApproval();
 	
 		newIncident.setApproved(needApproval ? false : true);
@@ -29,8 +35,8 @@ public class IncidentService {
 	}
 	
 	public void escalateIncident(EscalateIncidentDTO){
-		idIncident 
-		employeeId
+		/*idIncident
+		employeeId*/
 
 	}
 	
@@ -42,13 +48,13 @@ public class IncidentService {
 		
 	}
 	
-	public List<Incident> GetAllIncidents()
-	{
-		
+	public List<Incident> GetAllIncidents() {
+		List<Incident> incidentList = incidentRepository.findAll();
+		return null;
 	}
 	
-	public Incident GetIncident(long incidentId)
-	{
-		
+	public Incident GetIncident(long incidentId){
+		Incident selectedIncident = incidentRepository.findById(incidentId);
+		return null;
 	}
 }
