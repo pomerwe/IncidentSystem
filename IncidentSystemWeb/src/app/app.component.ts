@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { LoginService } from 'src/main';
 import { MenuComponent } from './menu/menu.component';
 
 @Component({
@@ -9,6 +11,12 @@ import { MenuComponent } from './menu/menu.component';
 export class AppComponent {
   title = 'IncidentSystemWeb';
   menuOn:boolean = false;
+  loginService:LoginService;
+
+  constructor(private router: Router)
+  {
+    this.loginService = LoginService.getInstance();
+  }
 
   getMenuBody()
   {
@@ -35,5 +43,11 @@ export class AppComponent {
     {
       this.menuOn = true;
     }
+  }
+
+  logout()
+  {
+    this.loginService.logout();
+    this.router.navigate(["/login"]);
   }
 }

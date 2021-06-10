@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import {MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS} from '@angular/material/dialog';
 import { DialogComponent } from './dialog/dialog.component';
+import { LoginpageComponent } from './loginpage/loginpage.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,6 +22,7 @@ import { DialogComponent } from './dialog/dialog.component';
     OpenIncidentPageComponent,
     OverlayPanelComponent,
     DialogComponent,
+    LoginpageComponent,
   ],
   imports: [
     BrowserModule,

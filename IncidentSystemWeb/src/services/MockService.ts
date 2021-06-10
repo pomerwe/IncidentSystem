@@ -31,7 +31,7 @@ export class MockService{
         name:"ADMIN",
         permissions:[]
       },
-      team: this.getTeamMock()
+      team: this.getTeamMock()[0]
     }
   }
 
@@ -73,9 +73,9 @@ export class MockService{
     };
   }
 
-  getTeamMock():Team
+  getTeamMock():Team[]
   {
-    return {
+    return [{
       id:1,
       name:"Tecnologia",
       services:[{
@@ -99,6 +99,62 @@ export class MockService{
         priority: Priority.HIGH,
         serviceLevelAgreement: 120
       }]
-    };
+    },
+    {
+      id:2,
+      name:"Desenvolvimento",
+      services:[{
+        id:1,
+        name:"Correção de Erros",
+        description: "Relatar um bug no sistema para o time de desenvolvimento",
+        priority: Priority.MEDIUM,
+        serviceLevelAgreement: 3600
+      },
+      {
+        id:2,
+        name:"Solicitar auxilio na resolução do chamado",
+        description: "Chamar o time de desenvolvimento para ajudar na resolução do chamado.",
+        priority: Priority.HIGH,
+        serviceLevelAgreement: 120
+      },
+      {
+        id:3,
+        name:"Implementar sistema",
+        description: "Chamar o time de desenvolviemnto para implementar um sistema",
+        priority: Priority.HIGH,
+        serviceLevelAgreement: 7200
+      }]
+    },
+    {
+      id:3,
+      name:"Suporte",
+      services:[{
+        id:1,
+        name:"Ambiente caiu",
+        description: "Solicitar ajuda com ambiente que parou de funcionar em produção.",
+        priority: Priority.CRITICAL,
+        serviceLevelAgreement: 120
+      },
+      {
+        id:2,
+        name:"Relatar erros no sistema",
+        description: "Relate os erros do sistema encontrado para o suporte.",
+        priority: Priority.MEDIUM,
+        serviceLevelAgreement: 7200
+      },
+      {
+        id:3,
+        name:"Solicitar base de teste",
+        description: "Pedir base de teste para o time do suporte.",
+        priority: Priority.LOW,
+        serviceLevelAgreement: 7200
+      }, {
+        id:4,
+        name:"Teste para mostrar o sla",
+        description: "Pedir base de teste para o time do suporte.",
+        priority: Priority.LOW,
+        serviceLevelAgreement: 0
+      }],
+    }];
   }
 }
