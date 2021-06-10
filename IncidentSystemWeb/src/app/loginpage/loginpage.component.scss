@@ -1,0 +1,57 @@
+.screen-overlay{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.335);
+    top:0;
+    left: 0;
+    z-index:12;
+    padding-top: 150px !important;
+    text-align: center;
+  
+    .screen-overlay-panel{
+        z-index:11;
+        position:relative;
+        display:inline-block;
+        min-width: 40%;
+        min-height: 40%;
+        max-width: 80%;
+        word-wrap: break-word;
+        background-color: white;
+        border: 1px solid rgba(0, 0, 0, 0.445);
+        border-radius: 6px;
+        box-shadow: 2px 3px 15px rgba(0, 0, 0, 0.548);
+
+        .header-div{
+            text-align: right;
+            padding:25px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.233);
+            
+            .title{
+                float: left;
+                font-weight: 500;
+                font-size:20px;
+                color: rgba(0, 0, 0, 0.835);
+            }
+
+            .close-button{
+                font-size: 24px !important;
+                vertical-align: middle;
+                display: inline-block;
+                cursor: pointer;
+            }   
+        }
+
+        .overlay-panel-content{
+            text-align: left !important;
+            padding:15px;
+            position:relative;
+            display:block;
+            margin: 0 auto;
+        }
+    }
+}
+  
+button:focus{
+    outline: none;
+}

@@ -10,14 +10,15 @@
 
 <!-- Toolbar -->
 <div class="toolbar" role="banner">
+  <span style = "margin-left:70px;">Sistema de Incidentes</span>
+  <div class="spacer"></div>
+  <span style= "margin-right:70px;" *ngIf= "loginService.getCurrentUser() != null">Usuário: {{loginService.getCurrentUser()?.employee?.name}}</span>
+  <button class="logout-button" *ngIf= "loginService.getCurrentUser() != null" (click) = "logout();">logout</button>
   <div hidden class="menu-button" (click) = "toggleMenu();">
     <span class="material-icons" style = "margin-left: 40px; transform: scale(1.2);">
       list
     </span>
   </div>
-  <div class="spacer"></div>
-  <span style = "margin-right:70px;">Sistema de Incidentes</span>
-  
 </div>
 
 <app-menu *ngIf = "menuOn"></app-menu>

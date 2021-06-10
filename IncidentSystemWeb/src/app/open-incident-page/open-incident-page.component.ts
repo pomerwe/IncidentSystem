@@ -14,6 +14,8 @@ import { IncidentInsertDTO } from '../dto/IncidentInsertDTO';
 import * as _ from 'underscore';
 
 import Holidays from "date-holidays"
+import { LoginService, MockRealTimeService } from 'src/main';
+import { Router } from '@angular/router';
 const holidayService = new Holidays("BR")
 
 @Component({
@@ -30,7 +32,7 @@ export class OpenIncidentPageComponent implements OnInit {
 
   mockService:MockService;
   currentTab:number = 1;
-
+  incidentList:Incident[];
   incidentStatusEnumMapper:any = new EnumMapper(IncidentStatus);
   
   isAdding:boolean = false;
@@ -48,52 +50,26 @@ export class OpenIncidentPageComponent implements OnInit {
   selectedTeam:Team | undefined = undefined;
   selectedService:Service | undefined = undefined;
   incidentDescription:any = "";
-
-  incidentList:Incident[];
   
   teamList: Team[];
 
-  constructor(mockService:MockService, public dialog: MatDialog) 
+  constructor(mockService:MockService, public dialog: MatDialog, private router: Router) 
   { 
     this.mockService = mockService;
-    this.currentUser = {
-      id:1,
-        name:"Estevão",
-        attributed_incidents: [],
-        business_role: {
-          id:1,
-          description:"Coordena os times de ti",
-          name:"Gerente de Ti",
-          services: []
-        },
-        requests:[],
-        system_role:{
-          id:1,
-          description:"administrador",
-          name:"ADMIN",
-          permissions:[]
-        },
-        team: this.mockService.getTeamMock()
-    };
+    this.currentUser = LoginService.getInstance().getCurrentUser()?.employee as Employee;
 
-    this.teamList = [
-      this.mockService.getTeamMock(),
-      this.mockService.getTeamMock(),
-      this.mockService.getTeamMock()
-    ]
+    this.teamList = this.mockService.getTeamMock();
 
-    this.incidentList = [
-      this.mockService.getIncidentMock(1),
-      this.mockService.getIncidentMock(2),
-      this.mockService.getIncidentMock(3)
-    ];
+    this.incidentList = MockRealTimeService.getInstance().incidentList;
 
     this.selectedIncident = this.incidentList[2];
   }
 
   
   ngOnInit(): void {
-
+    if(!LoginService.getInstance().isUserLoggedIn()){
+      this.router.navigate(["/login"]);
+    }
   }
 
 
