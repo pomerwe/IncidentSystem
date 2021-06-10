@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface IncidentRepository extends JpaRepository<Incident, Long> {
 
     @Transactional(readOnly = true)
-    Incident findById (Long id);
+    Incident findByIncidentId (Long id);
 
     @Transactional(readOnly = true)
     List<Incident> findAll ();

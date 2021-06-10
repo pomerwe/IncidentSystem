@@ -1,10 +1,12 @@
 package com.example.IncidentSystem.Services;
 
+import com.example.IncidentSystem.dto.IncidentDTO;
 import com.example.IncidentSystem.Models.Incident;
 import com.example.IncidentSystem.Models.Service;
 import com.example.IncidentSystem.Repository.IncidentLogRepository;
 import com.example.IncidentSystem.Repository.IncidentRepository;
 import com.example.IncidentSystem.Repository.ServiceRepository;
+import com.example.IncidentSystem.dto.ServiceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -12,49 +14,55 @@ import java.util.List;
 public class IncidentService {
 
 	@Autowired
+	static
 	ServiceRepository serviceRepository;
 
 	@Autowired
+	static
 	IncidentRepository incidentRepository;
 
 	@Autowired
 	IncidentLogRepository incidentLogRepository;
-	
-	public void openIncident(){
+
+	public static void openIncident(ServiceDTO serviceDTO) {
 		Incident newIncident = new Incident();
-		
-		Service selectedService = serviceRepository.findById(dto.Service.id);
+
+		Service selectedService = serviceRepository.findByServiceId(serviceDTO.id);
 
 		boolean needApproval = selectedService.needApproval();
-	
+
 		newIncident.setApproved(needApproval ? false : true);
 	}
-	
-	public void cancelIncident(){
-		
-	}
-	
-	public void escalateIncident(EscalateIncidentDTO){
-		/*idIncident
-		employeeId*/
+
+	public void cancelIncident() {
 
 	}
-	
+
+	public void escalateIncident(IncidentDTO escalateIncidentDTO) {
+		/*idIncident
+		employeeId*/
+	}
+
 	public void finishIncident() {
-		
+
 	}
-	
+
 	public void updateIncident() {
-		
+
 	}
-	
-	public List<Incident> GetAllIncidents() {
+
+	public static List<Incident> GetAllIncidents() {
 		List<Incident> incidentList = incidentRepository.findAll();
-		return null;
+		return incidentList;
 	}
-	
-	public Incident GetIncident(long incidentId){
-		Incident selectedIncident = incidentRepository.findById(incidentId);
-		return null;
+
+	public static Incident GetIncident(long incidentId) {
+		Incident selectedIncident = incidentRepository.findByIncidentId(incidentId);
+		return selectedIncident;
 	}
 }
+
+
+
+
+

@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface ServiceRepository extends JpaRepository <Service , Integer> {
 
     @Transactional(readOnly = true)
-    Service findById (Integer id);
+    Service findByServiceId (Integer id);
 
 }
